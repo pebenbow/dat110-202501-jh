@@ -1,0 +1,167 @@
+---
+title: Lab 0
+subtitle: CSC 110
+author:
+  - Pete Benbow
+  - Stephen Curry
+date: 2025-02-06
+date-format: long
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    fig-width: 8
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 1
+    fig-width: 8
+    fig-height: 5
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - heightrounded
+---
+
+\newpage
+
+# Instructions
+
+Welcome to CSC 110 Lab Zero! This is a sample lab assignment to help you 
+understand how lab assignments should be completed, rendered, and submitted to 
+Gradescope.
+
+This is a **pair programming** assignment: one student acts as the **driver**, the other as the 
+**navigator**. The driver writes code while the navigator directs them on what to write based on the 
+assignment instructions, and provides feedback and help as needed. You should rotate these roles 
+roughly every 15 minutes so each person gets plenty of time in the "driver's seat."
+
+Lab assignments can be taken **open-book** using the R4DS textbook and **open-note** 
+using the notes you've taken and the materials we have covered in class. 
+You should not rely on any other outside resources. Usage of generative AI 
+tools like ChatGPT, Claude, or DeepSeek is not allowed on this assignment.
+
+-   Write R code in each code chunk to load, transform, and plot your data.
+-   To earn full credit on coding questions, your code and its output must both be visible.
+-   If a coding question produces a plot/figure:
+    -   Include clear and descriptive labels (title, axis, etc.)
+    -   Include the `label` and `fig-cap` options at the top of each code block
+-   Written (non-code) answers to questions should be typed out in the answer boxes that are provided for you. Do not replace the heading in each answer box, but instead type your responses below each heading.
+-   I recommend you save and render your Quarto doc as an HTML document regularly. This not only has the benefit of showing your output, but it also tests your code to make sure everything is working. Any errors that the rendering engine encounters will be displayed in the RStudio console.
+-   **Remember:** all work is done under the Honor Code, and you must pledge your work at the end of the assignment.
+-   When finished, render your Quarto doc as a PDF, review it carefully for completeness and cleanliness, and submit it in Gradescope. Your Qmd file will stay stored in JupyterHub if we need to refer back to it.
+
+\newpage
+
+# Setup
+
+First, run the code block below to load the necessary packages.
+
+```{r}
+#| label: load-packages
+#| message: false
+
+library(tidyverse)
+library(readxl)
+```
+
+Next, create a new data frame named "df" containing the mtcars dataset that is 
+included in the Tidyverse, then use `glimpse()` to preview the data.
+
+```{r}
+#| label: load-data
+#| message: false
+
+df <- mtcars
+
+glimpse(df)
+```
+
+\newpage
+
+## Exercise 1
+
+### Exercise 1.1
+
+Make a scatterplot with `disp` on the X axis and `mpg` on the Y axis, and size 
+your points by the `wt` variable.
+
+```{r}
+#| label: fig1.1
+#| fig-cap: "Plot 1.1"
+#| warning: false
+
+ggplot(
+  data = df,
+  mapping = aes(
+    x    = disp,
+    y    = mpg,
+    size = wt
+  )
+) + 
+  geom_point(color = "blue") + 
+  labs(
+    title = "Engine displacement versus vehicle mileage and weight",
+    x     = "Engine displacement",
+    y     = "Miles per gallon",
+    size  = "Weight (tons)"
+  )
+```
+
+### Exercise 1.2
+
+Do you see a correlation of some kind in the chart? What might we conclude about 
+the relationship between engine displacement and vehicle mileage based on our 
+plot?
+
+::: {.callout-note title="Answer to 1.2" appearance="minimal"}
+Lorem ipsum dolor sit amet, iudico causae reprehendunt ad duo. Vivendo 
+constituto ut usu. Sed erat simul fabellas ex. Ut tamquam philosophia usu, duo 
+iisque conceptam theophrastus an, commodo albucius facilisi ne has. Ut his minim 
+volumus temporibus. Eu cum modo dolores, vel viris fuisset dignissim et. Eu mel 
+prompta vocibus, et alia falli homero per. Reque vituperatoribus an eos, primis 
+intellegam nam ex. In mea dolore impedit, brute convenire euripidis nec ei.
+:::
+
+\newpage
+
+# Honor Code Pledge
+
+On my honor I have neither given nor received unauthorized information regarding 
+this work, I have followed and will continue to observe all regulations 
+regarding it, and I am unaware of any violation of the Honor Code by others.
+
+::: {.callout-note title="Honor Code Pledge" appearance="minimal"}
+Peter Benbow
+:::
+
+# Submission checklist
+
+Before submitting your assignment in Gradescope, review this checklist carefully 
+to ensure you have done everything appropriately.
+
+-   Correct authors and date
+-   All code is clearly visible
+-   All output is clearly visible (does not apply to the Setup section), including labels and legends
+-   Written responses are typed into the appropriate answer boxes
+-   All empty or redundant plots are removed
+-   Honor Code pledge is signed
+
+Point penalties will be assessed if your assignment does not meet these guidelines.
+
+\newpage
+
+# Grading
+
+### Data viz questions
+
+-   1 point = Code and output are both clearly and completely visible
+-   1 point = Correct geom is used
+-   1 point = Correct aesthetics are applied
+-   1 point = Descriptive labels are applied
+
+### Short answer questions
+
+-   1 point = Answers the question thoughtfully
+-   1 point = Provides clear expository writing
