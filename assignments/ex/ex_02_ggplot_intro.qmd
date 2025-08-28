@@ -1,0 +1,220 @@
+---
+title: "Intro to ggplot"
+subtitle: "Class 02"
+---
+
+# Goals for this exercise
+
+-   Introduce how to load data from an Excel file and preview that data.
+-   Introduce building ggplot visuals from scratch, including aesthetics and labels.
+-   Introduce the `geom_point()` and `geom_smooth()` visuals.
+-   Explore the concept of "million dollar blocks" and America's incarceration problem, [illustrated in this 3-minute video from PBS](https://wtvi.pbslearningmedia.org/resource/bigdata_stem_million_dollar_blocks/the-human-face-of-big-data-prison-geography/#.YBLmr3dKiL4){target="_blank"}
+
+# Setup
+
+At the start of each Quarto document in this course, there is almost always a block or two of code that we use to set up the exercise before we begin.
+
+## Load packages
+
+Below, you will find a "setup" code block. Its purpose is to load the necessary packages to perform our analysis. In this case, we only need two: the `tidyverse` package will load `ggplot2` and a bunch of other packages for working with data, while the `readxl` package gives us the tools needed to load data from Microsoft Excel files.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+library(tidyverse)
+library(readxl)
+```
+
+## Load data
+
+When it comes time to load the data for our exercise, we can either do so in the setup block above, or we can do it in a subsequent block, as seen below.
+
+In this example, we are using the `read_excel()` function to find the Excel file in our "data" folder, and loading it into a new data frame named "prison."
+
+There's an additional argument we are invoking inside `read_excel()` which tells R to skip the first 6 rows of the Excel file because these rows contain header information that we do not need for our exercise.
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+prison <- read_excel("../../data/justice_NY_clean.xlsx",
+                     skip=6)
+```
+
+## Get to know the data
+
+There are several ways we can get a glimpse of the data we just loaded. One of those ways is to use a function that is literally named `glimpse()`:
+
+```{r}
+#| label: glimpse
+
+glimpse(prison)
+```
+
+Another method we can use is to simply type in the name of the dataset, which produces a table previewing the data:
+
+```{r}
+#| label: dataframe
+
+prison
+```
+
+### Questions
+
+1.  How many observations (rows) are there in our prison data frame?
+
+
+
+2.  How many variables (columns) are there?
+
+
+
+3.  What does each observation represent?
+
+
+
+### Variables of interest
+
+-   `zipcode`: US postal/ZIP code
+-   `rate`: incarceration rate within the ZIP code
+-   `count`: number of incarcerated individuals within the ZIP code
+-   `pct_under_25k`: the % of individuals living within the ZIP code who earn less than \$25,000 USD per year
+-   `$cost original`: estimated taxpayer cost expressed in USD millions (string)
+-   `cost`: estimated taxpayer cost expressed in USD millions (numeric)
+
+Note the unusual name of one of these variables. We'll come back to this later in the exercise.
+
+# Exercise
+
+As of 2023, there were nearly 2 million incarcerated people in the United States, meaning the US incarcerates about 1% of its adult population, far more than any other democracy on Earth.
+
+A disproportionate number of inmates come from a handful of neighborhoods in the country's biggest cities, like New York and Los Angeles. In some of these areas, the incarceration rate is so high that local governments spend more than \$1 million USD each year in prison costs for each single city block. These so-called "million dollar blocks" illuminate a troubling idea: that the majority of government investment (or the most visible sign of government investment) in these neighborhoods comes from the prison system.
+
+To examine this issue, we'll use our prison data frame, which comes to us from the Justice Atlas of Sentencing and Corrections. In particular, our dataset provides ZIP code-level data about incarceration rates in Brooklyn, NYC, the second most densely-populated county in the United States (after Manhattan).
+
+The question we will be exploring: **is there a relationship between the incarceration rate in Brooklyn and the percentage of the population who earn less than \$25,000 USD per year?**
+
+## Step 1
+
+To begin our analysis, we will use `ggplot` to create a scatter plot of our two variables. Using the `aes()` function, we will put the `pct_under_25k` variable on the X axis, and the `rate` variable on the Y axis.
+
+```{r}
+
+
+```
+
+Note the output we get from this, in particular the labels along the X and Y axes of the chart. Later in this exercise, we will use the `labs()` function to add custom labels that more clearly describe the data on these axes.
+
+## Step 2
+
+Let's explore other aesthetics we can add to our scatter chart by adding a third variable to our analysis: `cost`
+
+`geom_point()` has several aesthetic options we can choose from, so let's experiment with a few and see what they give us:
+
+-   size
+-   color
+-   fill
+
+```{r}
+
+
+```
+
+Make note of what this seems to indicate about the relationship between costs and incarceration rates: the higher the incarceration rate in a given neighborhood, the more money being spent by the prison system in that neighborhood.
+
+## Step 3
+
+For this next part, let's remove the `cost` variable and return to simply analyzing our two primary variables: `rate` and `pct_under_25k`.
+
+Now let's add some **static aesthetics** to our chart. As opposed to the aesthetics that we defined in our mapping, these are fixed aesthetics that apply to the entire `geom_point` layer, regardless of axis. We can define these in our `geom_point()` function.
+
+Static aesthetics are a good way to customize the look and feel of our plot. Let's use the following options to change the appearance of all the points in our scatter chart:
+
+-   shape: type numeric
+-   size: type numeric
+-   color: type text
+-   fill: type text
+-   alpha (opacity): type numeric
+
+::: callout-important
+**NOTE**: The values that you supply to text argument like `color` and `fill` should be written inside quotation marks, like "black" and "red". Meanwhile, the values you supply to numeric arguments like `shape`, `size`, and `alpha` should **not** be wrapped in quotation marks, but instead just plainly typed, like 24, 0.5, etc.
+:::
+
+```{r}
+
+
+```
+
+## Step 4
+
+Recall that, in Step 1 above, we highlighted the appearance of our labels on the X and Y axes. **Descriptive labeling is a critical part of data visualization**, and never something to skip over. You will be graded in this course on your use of data labels, so now is a good time to learn how to apply them in `ggplot`.
+
+Labels can be tacked onto your plot as an additional layer after your geom using the `labs()` function. And the good news is that they're really easy to add because they tend to map precisely to the aesthetics you defined in your geom's mapping argument.
+
+With that in mind, let's now add descriptive labels to our X and Y axes:
+
+-   X axis = `% of residents earning < $25K per year`
+-   Y axis = `Incarceration rate`
+
+```{r}
+
+
+```
+
+With these adjustments, we have produced a clean plot that seems to indicate the existence of a positive relationship between our two variables. In other words, we can reasonably conclude from our analysis that incarceration rates in Brooklyn are at least somewhat correlated to the percent of residents who earn less than \$25,000 USD per year.
+
+## Step 5
+
+To more clearly illustrate our conclusion that a positive relationship seems to exist between our two variables, we can add an additional geom layer to our plot using the `geom_smooth()` function. This places a "line of best fit" on top of our scatterplot that can visually indicate the strength of the relationship.
+
+Similar to our scatterplot, the `geom_smooth()` function has several arguments we can use to customize its appearance:
+
+-   `method`: determines what kind of regression model to use in calculating the slope of the line of best fit
+    -   `lm`: linear model (straight line)
+    -   `loess`: locally-estimated smoothing (smooth line)
+    -   And several others
+-   `se`: show or hide a shaded area representing the calculated standard error:
+    -   `TRUE`: show the standard error
+    -   `FALSE`: hide the standard error
+-   `color`: set the color of the line
+
+Let's use this knowledge to add a line of best fit that uses a linear regression model.
+
+::: callout-important
+**NOTE**: The `se` argument uses boolean (true/false) values, which are similar to numeric values in that they should **not** be written inside quotation marks. Later in this course, we will talk more deeply about different data types and how to handle them.
+:::
+
+```{r}
+
+
+```
+
+## Step 6
+
+One last thing...
+
+Inspecting your data before you begin your analysis is an important step task in data science. Recall the steps we took in the "Get to know the data" section at the start of this exercise, and remember that our dataset includes two cost variables: `cost` and `$cost original`.
+
+**If we duplicate our code from Step 2 above and replace `cost` with `$cost original`, what problems do we encounter?**
+
+```{r}
+
+
+```
+
+::: callout-note
+-   One problem is that `$cost original` is not a standard variable name because it includes a space in the middle, so you have to enclose it in backticks (not apostrophes!) so the space doesn't screw up everything.
+-   Another problem is `$cost original` is a text variable, not a numeric variable, so each individual value is treated as discrete, meaning it gets its own dot size, and they are being ordered **alphabetically** instead of numerically.
+-   Observe what this alphabetical ordering does to both the legend on the side of the chart, and the chart itself (specifically the size of each point). Notice how the circle "19.5M" is actually **smaller** than the value "9.2M" because of the alphabetical sorting. This is why we need to use the `cost` variable instead of `$cost original`. Later in this course, we'll talk more about data types and how to handle these kinds of scenarios.
+:::
+
+------------------------------------------------------------------------
+
+::: callout-important
+You've reached the end of the exercise!
+:::
