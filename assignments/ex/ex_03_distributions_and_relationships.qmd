@@ -1,0 +1,237 @@
+---
+title: "Visualizing distributions and relationships"
+subtitle: "In-class exercise"
+toc: true
+format: html
+---
+
+# Goals for this exercise
+
+- Learn how we can use data visualizations to examine the distribution of our data:
+  - Analyzing the frequency of one or more categorical variables using `geom_bar()`
+  - Analyzing the distribution of a numerical variable using `geom_histogram()`
+  - Analyzing the relationship between a numerical variable and a categorical one using `geom_boxplot()` or `geom_violin()`
+
+::: callout-note
+For the sake of time in this exercise, we will ignore data labels and just focus on the geoms and their aesthetics.
+:::
+
+# Setup
+
+This time, our setup block not only loads the packages we need, but it also loads the data we need. We don't need to do these operations in distinct code blocks!
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(readxl)
+
+acs <- read_csv("../../data/acs12.csv")
+```
+
+## Data preview
+
+Now let's preview the data using the techniques we've learned:
+
+```{r}
+#| label: data-preview-1
+#| echo: true
+#| include: true
+
+glimpse(acs)
+acs
+```
+
+This dataset comes to us from the U.S. Census Bureau. The Census Bureau runs several different kinds of surveys at various intervals, and you'll learn about these distinctions later in the course. This particular survey, called "ACS," stands for the "American Community Survey," a yearly survey conducted by the census that aims to gather data about a representative sample of the American population.
+
+Note the following:
+- 2,000 rows
+- 13 variables with a mixture of numeric (`<dbl>`) and categorical (`<chr>`) data types
+- Some values are marked `NA`, which indicates the absence of data
+
+# Types of variables
+
+- **Categorical variables** are those that can take only one of a small set of values^[See [R4DS 1.4.1](https://r4ds.hadley.nz/data-visualize.html#a-categorical-variable){target="_blank"}]. These are typically represented as text (character) data, and are attributes like names, places, groups, etc. Also known as qualitative data or dimensional data.
+- **Numerical variables** are those that are represented by numbers that we can add, subtract, or aggregate in some fashion^[See [R4DS 1.4.2](https://r4ds.hadley.nz/data-visualize.html#a-numerical-variable){target="_blank"}]. Think of ages, weights, grade-point averages, etc. Also known as quantitative data, numerical variables can be discrete or continuous:
+  - A **discrete numerical** variable is typically represented by a whole number (integer). It is countable and cannot be subdivided, like:
+    - the number of students in this class
+    - the number of windows in Chambers
+  - A **continuous numerical** variable is that which can lie anywhere along the infinite range of possibilities between two numbers. Your grade-point average (GPA) is a fantastic example of this: it has a lower limit of 0.0 and an upper limit of 4.0, but between those two limits there is an infinite range of possibilities where your GPA could fall. As such, continuous variables provide precise measurements, and are typically not represented by a whole number. Rather, they can be subdivided infinitely, which means you often see them in decimal format:
+    - the temperature outside
+    - the length of Great Britain's coastline
+    
+Our dataset for this exercise is a mixture of categorical and numerical variables, which makes it an excellent tool for teaching distributions and relationships.
+
+# Exercises
+
+## Visualizing distributions
+
+### Categorical variables
+
+#### Bar charts
+
+Our dataset contains a number of categorical variables we can analyze, so let's start with an easy one and try to determine the gender distribution of people in our census dataset.
+
+To do so, we'll use a simple bar chart with `geom_bar()`:
+
+```{r}
+#| label: bar-chart-demo
+
+
+```
+
+This gives us a rough idea of the gender distribution: there are more males than females in the dataset, which we can determine by the relative height of the bars, but a precise measurement eludes us, so let's add another layer to our bar chart using `geom_label()`:
+
+```{r}
+#| label: geom-label-demo
+
+
+```
+
+As you can see, this adds text to our chart which gives us the exact count within each category, and now we understand the gender distribution within our dataset all the better!
+
+#### Your turn!
+
+Pick another categorical variable from our ACS dataset and use that to create a bar chart which visualizes the distribution of that variable's values.
+
+```{r}
+#| label: your-turn-bar-chart
+
+
+```
+
+#### Stacked bar charts
+
+We can use bar charts to also examine the distribution of variables within other variables. For example, if we want to see the number of males versus females who attended college, we can do that quite simply by modifying the aesthetics of our visual. Specifically, we are going to add a `fill` aesthetic in our `ggplot()` function, and we're going to add `position` arguments to both of our geoms:
+
+```{r}
+#| label: stack-position-demo
+
+
+```
+
+::: callout-note
+The position argument needs to be called inside whatever geom it pertains to, but **outside** the mapping argument.
+:::
+
+There are multiple position adjustments we can use with bar charts:
+
+-   `stack`: true to its name, stacks different categories on top of each other
+-   `dodge`: places the categories side-by-side
+-   `fill`: similar to `stack`, but all stacks end up with the same height, making it useful for visualizing **proportions**
+
+#### Clustered bar charts
+
+With that in mind, let's try changing the position from "stack" to "dodge" and see what that does to our bar chart. This part requires a little extra in the `position` argument of our `geom_label()` function in order to get the data labels to match with the changing positions of our bars. But once you get it right, you have created a **clustered** bar chart, allowing you to see the frequency of observations within our male/female groups, side-by-side.
+
+```{r}
+#| label: dodge-position-demo
+
+
+```
+
+::: callout-tip
+What are the advantages of the dodge position versus the stack position?
+:::
+
+#### Proportional bar charts
+
+Now let's try the "fill" position and observe what happens:
+
+```{r}
+#| label: fill-position-demo
+
+
+```
+
+Our chart's Y axis is now expressed in **part-to-whole** fashion. In other words, we can see the proportion of each educational level relative to the other educational levels within each gender! This gives us a rough sense of percentages within our data.
+
+To refine this further, we can tweak the properties of the chart using two new functions:
+
+- The `percent()` function (which is part of the `scales` package)
+- The `sum()` function (which is part of base R)
+
+```{r}
+#| label: percent-labels-demo
+
+
+```
+
+Our revised code calculates the percentages by dividing each categories count by the overall sum. Then, the `percent()` function simply takes that fraction and expresses it as a percentage.
+
+One final adjustment we can make is to change how our Y axis is expressed, which can be done using the `scale_y_continuous()` function:
+
+```{r}
+#| label: percent-axis-demo
+
+
+```
+
+### Numerical variables
+
+#### Histograms
+
+**Histograms** appear similar to bar charts, but there's a major distinction between them: histograms visualize the distribution of a _numerical_ variable along the X axis, whereas a bar chart puts a categorical variable on the X axis.
+
+Per R4DS: "A histogram divides the x-axis into equally spaced bins and then uses the height of a bar to display the number of observations that fall in each bin."
+
+Furthermore, we can control the sizes of these bins by modifying two arguments of the `geom_histogram()` function:
+
+- `bins`: a static number representing the number of bins the chart will create along the X axis.
+- `binwidth`: another static number, but this time setting the width of each bin on the X axis.
+
+Adjusting our bins can sometimes aid in our analysis. For example, larger bin sizes might prevent us from seeing outliers that potentially affect our summary statistics and the conclusions we infer from the visualization, whereas smaller bin sizes might make the histogram too jagged. While smaller bin sizes still allow us to see the outliers, they can make it difficult to discern the overall shape of our variable's distribution. So the challenge with histograms is often manipulating the bins until you find the "sweet spot" that allows you to see the overall distribution of values **and** identify any outliers in the data.
+
+```{r}
+#| label: histogram-demo
+
+
+```
+
+#### Boxplots
+
+Boxplots are one of your professor's favorite visualizations because of their ability to not only visualize a distribution, but to do it across categories. This makes boxplots incredibly useful for comparing the distribution of a numerical variable across a categorical variable in the same dataset. They also give you an element of precision when describing the distribution of your data, because they allow you to see the median, 25th percentile, 75th percentile, and any outliers that may be present. 
+
+For example, if we want to **visualize the distribution of respondents' ages by employment status**, we can create a boxplot that puts the categorical variable (employment) on the X axis, and the numerical variable (age) on the Y axis. 
+
+```{r}
+#| label: boxplot-demo
+
+
+```
+
+#### Violin plots
+
+**Violin plots** are not covered in R4DS, but they're very similar to boxplots in their ability to visualize distributions of a numerical variable across different categories. They don't have the precision that boxplots do because they don't show you the percentiles, but they can still give you somewhat of an idea of where outliers are, and because the width of each "segment" is based on the number of observations in the data, the segments change their shape in a way that can show you where observations might be clustering.
+
+```{r}
+#| label: violin-demo
+
+
+```
+
+#### Facets
+
+Another way to examine relationships and distributions across categories is by **faceting**, which takes your main plot and subdivides it into smaller plots based on whatever category you give it. All we need is a categorical variable and a single line of code!
+
+Taking our histogram code from earlier, let's create a faceted histogram that allows us to see the distribution of respondents' ages within each employment category (in other words, we're doing the same thing we did in the last few plots, but in a slightly different way).
+
+```{r}
+#| label: faceted-histogram-demo
+
+
+```
+
+# Conclusion
+
+All the geoms we looked at today give you various ways of visualizing the distributions of different types of variables. These techniques are extremely useful for analyzing the composition of your data, detecting outliers, and inferring potential relationships between variables.
+
+------------------------------------------------------------------------
+
+::: callout-important
+You've reached the end of the exercise!
+:::
