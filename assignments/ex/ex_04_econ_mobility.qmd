@@ -1,0 +1,254 @@
+---
+title: "Examining Economic Mobility"
+format: html
+---
+
+# Goals for this exercise
+
+-   Use scatterplots to examine assertions from the Chetty study and Simpson's Paradox
+
+# Setup
+
+Once again, we start by defining our exercise setup, loading packages and data. We are using the `include: true` argument to specify that these blocks should remain visible in our final output for informational purposes at the start of the course, but as the semester progresses we will start to hide these blocks in our final output.
+
+## Load packages
+
+We load the same packages as we did in our last exercise.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+## Read in Chetty data
+
+Our dataset this time comes from the Chetty study. You were introduced to Chetty in the reading for today's class, via the Executive Summary.
+
+This code creates a new data frame named "chetty" by reading in the data from another Excel file.
+
+Also note the use of `skip=1` within our `read_excel()` function. Can you determine why this argument is necessary?
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+chetty <- read_excel("../../data/Lab1_Chetty_2014.xlsx", skip=1)
+```
+
+## Get to know the data
+
+Once again, use `glimpse()` or just invoke the name of the data frame to inspect it:
+
+```{r}
+# add your code here
+```
+
+### Questions
+
+1.  How many observations (rows) are there in our chetty data frame?
+
+::: {.callout-note title="Answer to #1" appearance="minimal"}
+There are X observations/rows in the chetty data frame
+:::
+
+2.  How many variables (columns) are there?
+
+::: {.callout-note title="Answer to #2" appearance="minimal"}
+There are Y variables/columns in the chetty data frame
+:::
+
+3.  What does each observation represent?
+
+::: {.callout-note title="Answer to #3" appearance="minimal"}
+Each row/observation in the chetty data frame represents ...
+:::
+
+### Variables of interest
+
+Today we will examine the following variables:
+
+| Variable | Type | Description |
+|------------------------|------------------------|------------------------|
+| `social_capital` | continuous | Social capital score |
+| `abs_mobility` | continuous | Absolute mobility score |
+| `rel_mobility` | continuous | Relative mobility score |
+| `urban` | categorical | Identifies whether the CZ is `urban` or `rural` |
+| `gini` | continuous | Gini coefficient |
+
+# Exercise, Part 1
+
+One of the conclusions of the Chetty study in 2014 was that **social capital**, defined as "the strength of an individual's social network and community," may influence upward economic mobility. We're going to explore that assertion in this exercise using Chetty's own data and a mixture of the variables seen above.
+
+Question: **How strong is the relationship between social capital and economic mobility?**
+
+## Step 1
+
+Using `geom_point()`, visualize the relationship between social capital and absolute mobility.
+
+```{r}
+#| warning: false
+#| label: fig-socap-absmob-1
+#| fig-cap: "Social capital vs. Absolute mobility"
+#| lightbox: 
+#|   group: abs-mobility-charts
+
+# add your code here
+```
+
+### Question 1
+
+Do you see a correlation? Is it what you expected from the Chetty study executive summary?
+
+::: {.callout-note title="Answer to Question 1" appearance="minimal"}
+:::
+
+## Step 2
+
+Add an aesthetic to your graph to represent whether the CZ is urban or not.
+
+```{r}
+#| warning: false
+#| label: fig-socap-absmob-2
+#| fig-cap: "Social capital vs. Absolute mobility, segmented by urban and rural CZ's"
+#| lightbox: 
+#|   group: abs-mobility-charts
+
+# add your code here
+```
+
+### Question 2
+
+Do you see any indication that **Simpson's Paradox** could be an issue?
+
+::: {.callout-note title="Answer to Question 2" appearance="minimal"}
+:::
+
+## Step 3
+
+Use faceting to separate urban and non-urban CZ's into two separate plots.
+
+```{r}
+#| warning: false
+#| label: fig-socap-absmob-3
+#| fig-cap: "Social capital vs. Absolute mobility, faceted by urban and rural CZ's"
+#| lightbox: 
+#|   group: abs-mobility-charts
+
+# add your code here
+```
+
+### Question 3
+
+Does this change your answer to the previous question? Do you see any indication that **Simpson's Paradox** could be an issue?
+
+::: {.callout-note title="Answer to Question 3" appearance="minimal"}
+:::
+
+## Step 4
+
+Use `geom_smooth()` to add a line of best fit to your faceted plot, and experiment with these different options for your line:
+
+-   `method`: determines what kind of regression model to use in calculating the slope of the line of best fit
+    -   `lm`: linear model (straight line)
+    -   `loess`: locally-estimated smoothing (smooth line)
+    -   And several others
+-   `se`: show or hide a shaded area representing the calculated standard error:
+    -   `TRUE`: show the standard error
+    -   `FALSE`: hide the standard error
+
+```{r}
+#| warning: false
+#| label: fig-socap-absmob-4
+#| fig-cap: "Social capital vs. Absolute mobility, faceted by urban and rural CZ's with line of best fit"
+#| lightbox: 
+#|   group: abs-mobility-charts
+
+# add your code here
+```
+
+### Question 4
+
+What differences do you observe between the urban and rural CZ's? Do you see any indication that **Simpson's Paradox** could be an issue?
+
+::: {.callout-note title="Answer to Question 4" appearance="minimal"}
+:::
+
+# Exercise, Part 2
+
+## Step 5
+
+Let's examine **relative mobility** this time. Borrowing your code from above, create a scatterplot that replaces the `abs_mobility` variable with `rel_mobility`, and add a line of best fit. Also, use a color aesthetic **on \`geom_point() only** to draw a single line for the entire dataset.
+
+```{r}
+#| warning: false
+#| label: fig-socap-relmob-1
+#| fig-cap: "Social capital vs. Relative mobility, segmented by urban/rural"
+#| lightbox: 
+#|   group: rel-mobility-charts
+
+# add your code here
+```
+
+## Step 6
+
+Now take the same chart from Step 5 above and facet it by the `urban` variable.
+
+```{r}
+#| warning: false
+#| label: fig-socap-relmob-2
+#| fig-cap: "Social capital vs. Relative mobility, faceted by urban/rural"
+#| lightbox: 
+#|   group: rel-mobility-charts
+
+# add your code here
+```
+
+### Question 5
+
+What differences do you observe when we use **relative mobility** instead of absolute?
+
+::: {.callout-note title="Answer to Question 5" appearance="minimal"}
+:::
+
+# Exercise, Part 3
+
+Question: **How strong is the relationship between inequality and economic mobility?**
+
+The **Gini coefficient** is a popular measure of income and wealth inequality. In a perfectly unequal society where one person holds all the wealth and everyone else has none of it, the Gini coefficient would be 1. In a perfectly equal society where all members hold an equal share of the wealth, the Gini coefficient would be 0.
+
+With this in mind, Chetty calculated the Gini coefficient for all of the CZs in the study, and this data is included in our dataset for today's lesson.
+
+## Step 6
+
+In this last phase, let's examine the relationship between inequality and mobility by plotting our `gini` variable on the X axis and our `abs_mobility` variable on the Y axis.
+
+```{r}
+#| warning: false
+
+# add your code here
+```
+
+### Question 6
+
+What do you observe when we analyze the relationship between the **Gini coefficient** and the **absolute mobility score**?
+
+::: {.callout-note title="Answer to Question 6" appearance="minimal"}
+:::
+
+# Wrap Up
+
+Great work! When you're finished, follow these steps:
+
+-   In the YAML block at the top of the document, in the "author" line, replace the professor's name with yours.
+-   Make sure the date on the document is correct.
+-   Click the Render button at the top of your Quarto document to render your work as an interactive HTML document. After the rendering process finishes (it may take 5-10 seconds), the document should be displayed in the Viewer panel in the bottom-right portion of RStudio.
+-   Explore the HTML output. Note the table of contents, the code blocks, the visuals, and the callout boxes that highlight important information.
+-   When studying and trying to reinforce your skills with R and the tidyverse, you may refer back to this completed Quarto document as a resource.
