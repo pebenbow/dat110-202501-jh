@@ -81,6 +81,53 @@ Create a new data frame named "highMobility_not_NC" which contains all CZ's **no
 
 ```
 
+## Diagramming
+
+Quick side note here: we can use Mermaid, a JavaScript-based markup language, to 
+create diagrams that visualize the flow of our data through dplyr pipelines.
+
+What we just did in the last few code blocks can be visualized like so:
+
+```{mermaid}
+%%| echo: true
+
+flowchart LR
+    A[chetty]
+    B[nc]
+    C[highMobility_NC]
+    D[highMobility_not_NC]
+    A -->|filter| B
+    A -->|filter| C
+    A -->|filter| D
+```
+
+Another way we could have written these pipelines:
+
+```{mermaid}
+%%| echo: true
+
+flowchart LR
+    A[chetty]
+    B[nc]
+    C[highMobility_NC]
+    D[highMobility_not_NC]
+    A -->|filter| B
+    B -->|filter| C
+    B -->|filter| D
+```
+
+You should experiment with Mermaid for creating diagrams like these! 
+
+::: callout-tip
+**Pro tip**: The site [mermaid.live](https://mermaid.live/){target="_blank"} provides 
+a free interactive tool for writing Mermaid diagrams and looking at their output. 
+Once you've got your diagram the way you want it to look, you can copy-paste it 
+into a Quarto code block like I've done in the two examples above, and it should 
+render in your output!
+
+You can also view the Quarto documentation about diagrams [here](https://quarto.org/docs/authoring/diagrams.html){target="_blank"}.
+:::
+
 ## Step 3(a)
 
 Using the data frame we just created in the previous step, let's use the `slice_max()` function to find the top 5 CZ's ordered by **absolute mobility** that are not in North Carolina.
