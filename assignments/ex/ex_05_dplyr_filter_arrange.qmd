@@ -1,0 +1,199 @@
+---
+title: "Filtering and arranging data"
+subtitle: "In-class exercise"
+format: html
+---
+
+::: callout-important
+These are suggested answers. This document should be used as reference only, it's not designed to be an exhaustive key.
+:::
+
+# Goals for this exercise
+
+-   Learn how to use pipes (`|>` or `%>%` to chain transformations together into a logical **data pipeline**)
+-   Learn how to remove rows from our data using the `filter()` function
+-   Learn how to limit our data to just the variables/columns we need using `select()`
+-   Learn how to sort rows in varying orders using `arrange()` and `desc()`
+
+::: callout-note
+This activity focuses on data wrangling rather than visualization, so we will ignore data labels this time.
+:::
+
+# Setup
+
+Same as our previous activities, we're using `library(tidyverse)` to load the tidyverse constellation of packages into our environment. But this time we're going to begin exploring the data manipulation verbs that are included with the `dplyr` package.
+
+```{r setup}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+
+chetty <- read_excel("../../data/Lab1_Chetty_2014.xlsx", skip=1)
+```
+
+# Exercise 1: filter
+
+## Step 1
+
+Use the assignment operator (`<-`) to create a new data frame named "nc," and load it with all rows from our `chetty` data frame from the state of North Carolina.
+
+::: callout-note
+Remember to use pipes to chain these steps together! You can use either the base pipes (`|>`) recommended by R4DS, or you can use the "magrittr" pipes (`%>%`) that work just as well.
+:::
+
+After creating your data frame, use the `gt()` function to render the output as a table.
+
+```{r}
+# Creating a new data frame, then referencing it
+
+```
+
+::: callout-important
+Note a very important aspect of working with data frames here: **when we create a new data frame using the assignment operator, the output does not automatically appear below our code block.**
+
+Simply writing `df <- myData` will produce a new data frame, but it will not display the output.
+
+There are two methods of getting the output to appear: you can either wrap the whole statement in parentheses, like so:
+
+`(df <- myData)`
+
+Or you can call the data frame, either on its own to produce a tibble, or by wrapping it inside of a package function like `gt()` to create an interactive table.
+:::
+
+## Step 2
+
+Create a new data frame named "highMobility_NC" which contains all CZ's in North Carolina with an absolute mobility score of **at least 40**.
+
+```{r}
+
+```
+
+## Step 3
+
+Create a new data frame named "highMobility_not_NC" which contains all CZ's **not** in North Carolina with an absolute mobility score of at least 40.
+
+```{r}
+
+```
+
+## Step 3(a)
+
+Using the data frame we just created in the previous step, let's use the `slice_max()` function to find the top 5 CZ's ordered by **absolute mobility** that are not in North Carolina.
+
+We can use `slice_max()` to find the top N rows of any data frame based on a variable that we specify. That variable is our first argument, and the N is our second argument.
+
+```{r}
+
+```
+
+## Step 4
+
+Let's now explore the difference between the AND operator (&) and the OR operator (|). 
+
+We will start from our initial chetty data frame again. This time, do **not** create a new data frame, but still render a table that allows us to see all of the CZ's that are in North Carolina **OR** have an absolute mobility score greater than or equal to 40.
+
+```{r}
+
+```
+
+---
+
+# Exercise 2: select
+
+## Step 5
+
+Repeat Steps 1-4 above, but this time use `arrange()` to sort the CZ's in decreasing order of absolute mobility, and use `select()` to keep only the CZ name, state, and absolute mobility variables in the resulting data frames. Remember to use pipes!
+
+```{r}
+#1: CZs in North Carolina
+
+#2: CZ's in North Carolina with absolute mobility at least 40 
+
+#3: CZ's in any state other than North Carolina, with absolute mobility at least 40
+
+#4: CZ's that are in North Carolina or have absolute mobility less than 40
+
+```
+
+## Step 6
+
+Use the `%in%` operator to produce a dataframe containing CZ's in the South, Midwest, and Northeast regions. ([See R4DS 3.2.1](https://r4ds.hadley.nz/data-transform.html#filter))
+
+```{r}
+
+```
+
+## Step 7
+
+Remember when we plotted social capital vs. absolute mobility, we got a warning that 48 points were removed? Run this block again to see the warning:
+
+```{r}
+
+```
+
+Now use the `is.na()` function and pipes to print all rows that are missing values for absolute mobility:
+
+```{r}
+
+```
+
+Repeat the same step from above, but this time print all rows that are missing social capital scores:
+
+```{r}
+
+```
+
+We determined there are 32 rows missing `abs_mobility` and 19 rows missing `social_capital`. How many rows are missing one or the other, or possibly both?
+
+```{r}
+
+```
+
+There were 48 missing one of these variables in our scatter plot, which is exactly how many we were warned about!
+
+# Exercise 3: ggplot
+
+This is where things get exciting, because we can plot exactly what we want from our data frame by piping filtered data into ggplot. In these examples, start with the full chetty data frame rather than using already filtered data frames.
+
+## Step 8
+
+Reproduce the scatter plot above, but get rid of the warning by filtering out the missing data first. Notice we no longer need to put `data = chetty` in the `ggplot()` call because we are using the pipes to pass in the data that we transformed in our preceding data transformations.
+
+```{r}
+
+```
+
+## Step 9
+
+In this step, plot social capital vs. absolute mobility, but only for CZs in NC.
+
+```{r}
+
+```
+
+## Step 10
+
+Now plot social capital vs. absolute mobility for only urban CZ's.
+
+```{r}
+
+```
+
+## Step 11
+
+Using your code from Step 10, add a line of best fit for each region and explore whether there might be some indication of Simpsons' Paradox among our urban CZ's.
+
+```{r}
+
+```
+
+------------------------------------------------------------------------
+
+::: callout-important
+You've reached the end of the exercise!
+:::
