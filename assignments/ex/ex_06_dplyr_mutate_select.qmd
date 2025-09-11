@@ -1,0 +1,244 @@
+---
+title: "Mutating and selecting data"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Goals for this exercise
+
+-   Learn how to use the `mutate()` function in `dplyr` to calculate new
+    variables for our data that we can use for ranking, filtering, and
+    other operations.
+
+::: callout-note
+This activity focuses on data wrangling rather than visualization, so we
+will ignore data labels this time.
+:::
+
+------------------------------------------------------------------------
+
+# Setup
+
+You know the drill: load the packages and data!
+
+```{r setup, include=FALSE}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(patchwork)
+
+chetty <- read_excel("../../data/Lab1_Chetty_2014.xlsx", skip = 1)
+```
+
+Then create a subset of `chetty` by creating a new data frame consisting
+of only the variables we need for our analysis:
+
+```{r}
+#| label: load-subset
+#| echo: true
+#| include: true
+#| warning: false
+
+chty <- chetty |>
+  select(
+    cz_name, 
+    state, 
+    pop_2000, 
+    abs_mobility, 
+    prob_q1q5,
+    starts_with("frac"),
+    hhi_percap,
+    urban, 
+    region
+    )
+```
+
+------------------------------------------------------------------------
+
+# Exercise 1
+
+## Step 1
+
+Make new variables for each of these quantities:
+
+-   `rel_pop` = the number of people in each CZ who consider themselves
+    to be religious
+-   `log2income` = the log base 2 of the per capita household income
+    (you can use the built-in `log2()` function for this)
+-   `not_black` = the proportion of people who are **not** Black/African
+    American
+
+Then use `select()` to only include the CZ name, state, and the three
+new variables you just created.
+
+```{r}
+
+```
+
+## Step 2
+
+It's not always necessary to save transformed data as a new data frame,
+especially when you're still experimenting and you're not sure you have
+the output you need. However, once you have confirmed your code works
+and gives you the right output, you can overwrite the original subset
+data frame using the assignment operator, like so:
+`df <- df |> blah blah blah...`
+
+Remember: to see the results, you can wrap the whole statement inside
+parentheses.
+
+```{r}
+
+```
+
+::: callout-important
+Note how we overwrote our data frame, but `mutate()` allowed us to
+simply tack on the new variables
+:::
+
+## Sidebar
+
+**Why are we calculating the log base 2 of per capita household
+income??**
+
+Income data from geographic areas can often be right-skewed, meaning
+that a few high-income households can have an outsize influence on
+summary statistics like averages. Those outliers can distort our
+analysis, so a logarithmic transformation like this helps to mitigate
+the presence of the outliers, making our data less vulnerable to extreme
+values and leading to more robust statistical inferences.
+
+Specifically, taking the log base 2 of income emphasizes **relative
+changes** in our income variable, rather than absolute differences.
+
+For example, the absolute difference between \$1,000 and \$2,000 is
+\$1,000, correct? And the absolute difference between \$10,000 and
+\$20,000 is \$10,000, correct? In both situations, the income has
+doubled, but the absolute change is much different.
+
+With that in mind, let's see what happens when we take the log base 2 in
+both situations:
+
+$$
+\log_2(2000) - log_2(1000) = log_2(\frac{2000}{1000}) = log_2(2) = 1
+$$
+
+$$
+\log_2(20000) - log_2(10000) = log_2(\frac{20000}{10000}) = log_2(2) = 1
+$$
+
+The outputs are exactly the same! This means doubling income is
+represented by a constant increase in the $log_2$ value, regardless of
+the initial income value. In short, that $log_2$ value helps us quantify
+the relative change in incomes.
+
+This process of adjusting or re-scaling values to minimize the effect of
+the outliers is referred to as **normalization**. We have "normalized"
+our income variable to emphasize relative change over absolute change,
+and produce a distribution with less skewness.
+
+::: callout-note
+**For my DAT-153 students:** this kind of normalization is different
+from the normalization we discuss in database design principles. Same
+word, but two vastly different meanings!
+:::
+
+To visualize the difference between our original per capita income
+variable and our new normalized variable, let's generate a boxplot for
+each. We'll use the excellent `patchwork` package to stitch both plots
+together into a single output:
+
+```{r}
+
+```
+
+This also helps us visually see the results of the log base 2
+transformation: it compresses the higher values and expands the lower
+values, creating a distribution that is more symmetrical around the
+mean. This is closer to a **normal distribution**, one of the biggest
+concepts in probability. Many of the most important and common
+statistical methods for analyzing numerical data (like income) assume
+the data are normally distributed, so doing this kind of transformation
+can improve the accuracy and reliability of our analysis.
+
+::: callout-note
+**Did you know?**: Normal distributions are naturally-occurring. They
+can be used to describe many biological random variables, including
+people's height, weight, blood pressure, and IQ scores.
+:::
+
+------------------------------------------------------------------------
+
+# Exercise 2
+
+## Step 3
+
+Make new variables that indicate which percentile and which quintile the
+per capita household income is in among all CZs:
+
+-   `ptile_hhipercap`: use the `percent_rank()` function here.
+-   `qtile_hhipercap`: use the `ntile()` function here, with the second
+    argument being used to specify that we are looking for quintiles
+    (5).
+
+Note: we can use the `everything()` function to make sure we include all
+of our original variables in our output.
+
+```{r}
+
+```
+
+Calculating these percentiles and quantiles helps us locate specific
+CZ's along the overall distribution.
+
+## Step 4
+
+Create a new variable that returns TRUE whenever a CZ is ranked in the
+top 50 commuting zones by population. You can use the `min_rank()`
+function here with the `pop_2000` variable to accomplish this.
+
+```{r}
+
+```
+
+## Step 5
+
+OK, let's try something more complicated that demonstrates how we can
+chain these transformations together. Make a data frame named
+`worst_mobility` containing:
+
+-   The 41st to 50th worst absolute mobility scores;
+-   among the 50 biggest CZs (measured by population);
+-   sorted in that order; and
+-   displaying only the rank, CZ name, absolute mobility, and population
+
+```{r}
+
+```
+
+## Step 6
+
+Lastly, add a variable to the data frame you made in Step 5 that tracks
+the **running total** of people in these bottom 10 of the 50 largest
+CZs.
+
+::: callout-hint
+Running totals can be calculated using the `cumsum()` function.
+:::
+
+```{r}
+
+```
+
+------------------------------------------------------------------------
+
+::: callout-important
+You've reached the end of the exercise!
+:::
