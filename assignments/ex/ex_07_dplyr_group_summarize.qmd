@@ -1,0 +1,226 @@
+---
+title: "Grouping and summarizing data"
+format: html
+---
+
+# Goals for this exercise
+
+- Learn how to use `group_by()` and `summarize()` to aggregate data.
+- Learn how to use `slice_max()` and `slice_min()` to get top/bottom N rows.
+- Learn how to use `bind_rows()` to combine two data frames together when they have the same variables.
+
+::: callout-note
+This activity focuses on data wrangling rather than visualization, so we will ignore data labels this time.
+:::
+
+# Setup
+
+You know the drill: load the packages!
+
+```{r setup, include=FALSE}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+And now load the data:
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+typ = append(c("numeric", "text", "text"), rep(c("numeric"),38))
+
+chetty_t8 <- read_excel(
+  "../../data/Chetty_Intergenerational Mobility_tables.xlsx", 
+  sheet     = "Online Data Table 8", 
+  skip      = 6, 
+  col_types = typ
+  ) |>
+  filter(CZ > 0)
+
+# Note that mobility measures are in a different sheet!
+```
+
+As usual, since this is a new dataset for us, let's start by previewing our data:
+
+```{r}
+glimpse(chetty_t8)
+```
+
+What do we observe about the dataset? How many rows and observations are we dealing with? What does each row represent? What categorical variables do we have? 
+
+Also note the naming of the variables: the vast majority of them have spaces, meaning we will need to use backticks in our code.
+
+There are upsides and downsides to the way these variable names are currently formatted. The main upside is that they might minimize the amount we need to apply custom labels to our plots using `labs()`. But the main downside is that we will need to use backticks throughout our code to make sure R interprets the variable names correctly.
+
+---
+
+# Exercises
+
+## Grouping and summarizing
+
+### Simple grouping
+
+First, let's cover how to make summary tables with `count()`. Use this technique to display the number of urban and non-urban CZs.
+
+```{r}
+
+```
+
+This represents probably the quickest and easiest way to get the frequency of observations within a discrete variable: just ask for a count!
+
+The other way to aggregate our data, though, which is far more versatile, is to combine the `group_by()` function with the `summarize()` function, both of which are part of the dplyr package.
+
+`group_by()` is used to specify what column(s) we want to aggregate. For example, if we want to aggregate statistics by gender or sex, we can simply specify `group_by(sex)`.
+
+When we add `summarize()` after `group_by()`, we can then specify how we want to aggregate this information. In the following example, we'll calculate both the count of observations and the mean value of our ``Income Segregation`` variable for each group.
+
+```{r}
+
+```
+
+### Your turn!
+
+Taking the code from our previous block, now I want you to go through and calculate several more summary statistics that can help us quantify the distribution of our data. 
+
+- Use `min()` to find the lowest value
+- Use `max()` to find the highest value
+- Use `median()` to find the median
+- Use `quantile()` to find the 1st and 3rd quartile values
+- Use `sd()` to find the standard deviation
+
+::: callout-tip
+When using `quantile()`, you need to specify two arguments:
+
+- The variable you are summarizing
+- The percentile you want to calculate
+
+See if you can determine which values you need to supply to the second argument to determine both the 1st and 3rd quartiles!
+:::
+
+```{r}
+
+```
+
+### Visualizing groups
+
+Now, to put these numbers into a visual context, let's draw a boxplot of the same data. Along the way, it may help us to manipulate our Y axis in order to draw the gridlines so it's easier to line up the quartiles in our boxplot with the Y axis, so we'll use the `scale_y_continuous()` function to do that.
+
+```{r}
+
+```
+
+With the boxplots combined with the output of our grouping and summarizing operations, we get a 
+clearer picture of how the data points are distributed. Namely, that urban areas tend to have higher amounts of income segregation relative to rural areas. 
+
+Combining summary tables with plots like this can be a good way to add specificity to your analysis. 
+
+---
+
+### Grouping by multiple variables
+
+Now let's see how grouping by multiple variables can help us alter the granularity 
+of our analysis.
+
+Calculating the same summary statistics we did earlier, generate a summary table 
+that presents the data at a grain of one row per state per urban/rural.
+
+```{r}
+
+```
+
+## Slicing and grouping
+
+### Getting top N rows
+
+Use the `slice_max()` function to identify the CZ that has the highest income 
+segregation in the country. Use the `select()` function to only get the columns 
+you need for this summary table.
+
+```{r}
+
+```
+
+Now do it again, but adjust your arguments to identify the **top 5** CZ's with 
+the highest income segregation in the country. Continue to use the `select()` 
+function to only get the columns you need.
+
+```{r}
+
+```
+
+### Slicing groups
+
+Use `group_by()` with `slice_max()` to identify the CZ that has the highest 
+income segregation **in each US state**. Arrange your results by income segregation 
+in descending order.
+
+```{r}
+
+```
+
+## Comparing top vs bottom
+
+For the final exercise of this class, 
+
+- Create a new data frame named `chetty_t8_a`. Populate this data frame with all CZ's from our `chetty_t8` data frame that have a 2000 population greater than 1 million people. Then return only the columns for CZ name, State, and the Gini coefficient, and lastly calculate a new variable named `gini_rank` that ranks all CZ's by their Gini coefficient.
+- Using the transformed data frame we just created, add a new data frame named `chetty_top5_gini` that contains **only the top 5 commuting zones** by their Gini coefficient scores.
+- Similar to the previous step, add a new data frame named `chetty_bottom5_gini` that contains **only the bottom 5 commuting zones** by their Gini coefficient scores.
+- Use the `bind_rows()` function to combine the two data frames you just created into a third data frame named `chetty_top5_bottom5_gini`.
+- Do all of this in the single code block provided below.
+
+::: callout-note
+There are a few different ways to solve this. Let's see what you come up with!
+:::
+
+If you need help visualizing what you're doing, I've included a Mermaid diagram 
+here that you can view by rendering your assignment file to HTML:
+
+```{mermaid}
+%%| echo: true
+
+flowchart LR
+    A[chetty_t8]
+    B[chetty_t8_a]
+    C[chetty_top5_gini]
+    D[chetty_bottom5_gini]
+    E[chetty_top5_bottom5_gini]
+    A -->|filter| B
+    B -->|slice| C
+    B -->|slice| D
+    C -->|bind| E
+    D -->|bind| E
+```
+
+```{r}
+
+```
+
+Lastly, use the final data frame you created to visualize both the top 5 and bottom 5 
+commuting zones together in a single bar chart.
+
+Use `stat = "identity"` in your `geom_bar()` function to overwrite the default 
+count statistic. Setting the statistic to "identity" will ensure that the bar 
+chart uses the value of the Gini variable to map its data.
+
+```{r}
+
+```
+
+::: callout-tip
+**Remember**: the higher the Gini coefficient, the more inequality we observe!
+:::
+
+------------------------------------------------------------------------
+
+::: callout-important
+You've reached the end of the exercise!
+:::
