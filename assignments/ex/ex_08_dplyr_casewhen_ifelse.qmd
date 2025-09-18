@@ -1,0 +1,183 @@
+---
+title: "Conditional mutations and factors"
+format: html
+---
+
+# Goals for this exercise
+
+- Learn how to use `mutate()` together with the `case_when()` and `if_else()` functions to create new categorical variables.
+- Learn how to use `factor()` to override default alphabetical sorting on categorical variables.
+- Learn how to use `relocate()` to change the order of columns in a data frame.
+
+# Setup
+
+You know the drill: load the packages!
+
+```{r setup, include=FALSE}
+#| label: load-packages
+#| echo: true
+#| include: true
+#| warning: false
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+And now load the data:
+
+```{r}
+#| label: load-data
+#| echo: true
+#| include: true
+#| warning: false
+
+typ = append(c("numeric", "text", "text"), rep(c("numeric"),38))
+
+chetty_t8 <- read_excel(
+  "../../data/Chetty_Intergenerational Mobility_tables.xlsx", 
+  sheet     = "Online Data Table 8", 
+  skip      = 6, 
+  col_types = typ
+  ) |>
+  filter(CZ > 0)
+```
+
+# case_when exercises
+
+## Exercise 1
+
+-   Starting from `chetty_t8`, create a new data frame named `chetty_t8_a`
+-   Use `relocate()` to position the CZ name, state, and school expenditure per student as the first three variables in our dataset. This will keep us from having to scroll through all the columns to look at our results.
+-   Use `mutate()` and `case_when()` to populate the data frame with a new categorical variable named `sch_expend_level` that splits school expenditure per student into buckets:
+    -   When expenditure per student is less than 5, categorize as "low"
+    -   When expenditure per student is less than 7, categorize as "medium"
+    -   When expenditure per student is less than 9, categorize as "high"
+    -   When expenditure per student is greater than or equal to 9, categorize as "very high"
+
+After that, arrange the data by the new variable.
+
+::: callout-tip
+The `mutate()` function has an optional argument which you can use to control where your new variable appears in the data frame. Consult the documentation to find this argument and incorporate it into your code!
+:::
+
+```{r}
+
+```
+
+## Exercise 2
+
+As you scroll through the data, you'll notice that we have several CZ's who have NA values for the school expenditure variable. In this next block, let's copy-paste the same code from above and insert a step before the mutation that removes those NA values.
+
+```{r}
+
+```
+
+::: callout-note
+**Note**: This latest transformation will have the effect of basically negating our `TRUE ~ "other"` condition in the last line of the `case_when()` function, because all other conditions are being met by our data. We can choose to remove the `TRUE ~ "other"` at this point, or leave it in our code as a way to catch any other oddities that might appear in our data. Personally, I recommend the latter approach.
+:::
+
+## Exercise 3
+
+Now that we've use `case_when()` to categorize school expenditure levels, let's look at how to plot that data.
+
+Our first question: **Is there a relationship between teacher-student ratios and high school dropout rates?**
+
+Let's plot this data and segment by the expenditure levels using a color aesthetic:
+
+```{r}
+#| warning: false
+#| message: false
+#| fig-height: 5
+
+
+```
+
+## Exercise 4
+
+Notice how our `sch_expend_level` variable in the above scatterplot is sorting itself in alphabetical order wherever it appears: legend, facets, etc.
+
+Any variable that has a natural, meaningful order is known as an **ordinal variable**. Common examples:
+
+-   low, medium, high
+-   small, medium, large
+-   freshman/first-year, sophomore, junior, senior
+
+![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTh1eXpxb2ZjeXY0YXQ2ZzIxdDQxOTBnbjlyemEyMWltaGpqMWM5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/26ufdipQqU2lhNA4g/giphy.gif)
+
+You will often work with variables that should be presented in a natural order (like one of the above examples), but R will sort them alphabetically by default. We can fix this by introducing the `factor()` function, which allows us to override the default alphabetical sorting, and force the data to arrange itself in the order of our choosing.
+
+Specifically, we can do this by introducing another `mutate()` into our data pipeline:
+
+```{r}
+
+```
+
+Once this done, simply recreate our scatterplot from earlier and notice how our legend is now sorted.
+
+```{r}
+#| warning: false
+#| message: false
+#| fig-height: 5
+
+
+```
+
+## Exercise 5
+
+For our last exercise in this section, let's use the `facet_grid()` function to 
+segment our data by both expenditure level AND urban/rural (using the ``Urban Areas`` variable).
+
+What outcomes do you observe?
+
+```{r}
+#| warning: false
+#| message: false
+#| fig-height: 5
+
+
+```
+
+# if_else exercises
+
+## Exercise 6
+
+The other conditional mutation we can do is to use the `if_else()` function, which 
+has three arguments:
+
+- The condition we are evaluating (returns TRUE or FALSE)
+- The output we want to see when the condition is TRUE
+- The output we want to see when the condition is FALSE
+
+Copy-paste the same pipeline code from earlier, and use the `if_else()` function 
+to classify our ``Urban Areas`` variable:
+
+- When ``Urban Areas`` is 0, then output "rural"
+- When ``Urban Areas`` is 1, then output "urban"
+
+**Note**: You may choose to overwrite the original variable, or create a new one!
+
+```{r}
+
+```
+
+## Exercise 7
+
+To wrap up, you can now copy-paste your `ggplot` code from earlier. If you chose 
+to overwrite the original ``Urban Areas`` variable, you should not need to make 
+any changes to see the new results. However, if you created a new variable like 
+I did, go ahead and update your `facet_grid()` function to use the new variable.
+
+```{r}
+#| warning: false
+#| message: false
+#| fig-height: 5
+
+
+```
+
+------------------------------------------------------------------------
+
+::: callout-important
+You've reached the end of the exercise!
+:::
